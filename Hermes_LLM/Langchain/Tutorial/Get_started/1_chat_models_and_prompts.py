@@ -1,14 +1,28 @@
 """
 Chat models and prompts: Build a simple LLM application with prompt templates and chat models.
 """
+import yaml
+from pathlib import Path
 from langchain_ollama.chat_models import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
 
+# 0. Load config
+def find_root_dir():
+    """Find the root directory of the project."""
+    current_dir = Path(__file__).parent
+    while current_dir.name != "Hermes":
+        current_dir = current_dir.parent
+    return current_dir
+
+project_root = find_root_dir()
+config_path = project_root / "config.yaml"
+config = yaml.safe_load(config_path.read_text())
+
 # 1. Using Language Models
 llm_model = ChatOllama(
-    model="deepseek-r1:14b",
-    temperature=0
+    model=config["ollama"]["model"],
+    temperature=config["ollama"]["temperature"],
 )
 messages = [
     SystemMessage("Translate the following from English into Italian"),
